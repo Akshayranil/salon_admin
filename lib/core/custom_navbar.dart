@@ -16,7 +16,7 @@ class CustomNavigationbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: tabindex??0,
-      length: 5,
+      length: 4,
       child: Scaffold(
         bottomNavigationBar: Container(
           color: ConstantColors.primary,
@@ -24,9 +24,9 @@ class CustomNavigationbar extends StatelessWidget {
           child: TabBar(
             tabs: [
               Tab(icon: Icon(Icons.home), text: "Dashboard"),
-              Tab(icon: Icon(Icons.bookmark_added_sharp), text: "Bookings"),
-              Tab(icon: Icon(Icons.favorite), text: "Services"),
-              Tab(icon: Icon(Icons.person), text: "Staffs"),
+              
+              Tab(icon: Icon(Icons.miscellaneous_services), text: "Services"),
+              Tab(icon: Icon(Icons.badge), text: "Staffs"),
               Tab(icon: Icon(Icons.person), text: "Profile"),
             ],
             indicatorColor: Colors.transparent,
@@ -37,7 +37,7 @@ class CustomNavigationbar extends StatelessWidget {
         body: TabBarView(
           children: [
             DashboardScreen(),
-            BookingsScreen(),
+            
             ServiceScreen(),
             StaffScreen(),
             ProfileScreen(),

@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:salon_admin/features/auth/data/datasource/auth_datasource.dart';
 import 'package:salon_admin/features/auth/data/repository/auth_repoimplementation.dart';
 import 'package:salon_admin/features/auth/domain/usecase/auth_usecase.dart';
+import 'package:salon_admin/features/dashboard/data/datasource/booking_datasource.dart';
+import 'package:salon_admin/features/dashboard/data/repository/booking_repositoryimpl.dart';
+import 'package:salon_admin/features/dashboard/domain/usecase/booking_usecase.dart';
 import 'package:salon_admin/features/services/data/datasource/service_datasource.dart';
 import 'package:salon_admin/features/services/data/repository/service_repoimplementation.dart';
 import 'package:salon_admin/features/services/domain/usecase/service_usecase.dart';
@@ -32,4 +35,14 @@ class Injection {
       StaffRepositoryImpl(staffDataSource);
 
   static final staffUseCase = StaffUseCase(staffRepository);
+
+  /// BOOKING
+static final bookingDataSource =
+    BookingRemoteDataSource(firestore);
+
+static final bookingRepository =
+    BookingRepositoryImpl(bookingDataSource);
+
+static final bookingUseCase =
+    BookingUsecase(bookingRepository);
 }

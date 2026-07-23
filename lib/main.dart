@@ -5,6 +5,7 @@ import 'package:salon_admin/core/dependency_injection.dart';
 
 import 'package:salon_admin/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:salon_admin/features/auth/presentation/ui/splash_screen.dart';
+import 'package:salon_admin/features/dashboard/presentation/bloc/booking_bloc.dart';
 import 'package:salon_admin/features/services/presentation/bloc/service_bloc.dart';
 import 'package:salon_admin/features/staff/presentation/bloc/staff_bloc.dart';
 
@@ -16,6 +17,7 @@ void main() async {
         BlocProvider<AuthBloc>(create: (_)=>AuthBloc(Injection.loginUseCase,Injection.logoutUseCase,Injection.checkLoginUseCase)..add(CheckAuthEvent())),
         BlocProvider<ServiceBloc>(create: (_)=>ServiceBloc(Injection.serviceUseCase)),
         BlocProvider<StaffBloc>(create: (_)=>StaffBloc(Injection.staffUseCase)),
+        BlocProvider<BookingBloc>(create: (_)=>BookingBloc(Injection.bookingUseCase))
       ],
     child: const MyApp()));
 }
