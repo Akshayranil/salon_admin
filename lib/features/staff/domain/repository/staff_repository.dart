@@ -8,4 +8,6 @@ abstract class StaffRepository {
   Future<void> deleteStaff(String id);
 
   Future<List<StaffEntity>> getStaffByService(String serviceId);
+
+  Future<String> uploadStaffImage(String path);
 }

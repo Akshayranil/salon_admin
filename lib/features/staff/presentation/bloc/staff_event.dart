@@ -4,9 +4,11 @@ abstract class StaffEvent {}
 
 class AddStaffEvent extends StaffEvent {
   final String name;
+  final String imagePath;
+  final String description;
   final List<String> serviceIds;
 
-  AddStaffEvent(this.name, this.serviceIds);
+  AddStaffEvent(this.name,this.imagePath, this.description,this.serviceIds);
 }
 
 class LoadStaffEvent extends StaffEvent {}
@@ -22,5 +24,3 @@ class LoadStaffByServiceEvent extends StaffEvent {
 
   LoadStaffByServiceEvent(this.serviceId);
 }
-
-

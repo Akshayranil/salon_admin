@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salon_admin/features/services/presentation/bloc/service_bloc.dart';
 import 'package:salon_admin/features/staff/presentation/bloc/staff_bloc.dart';
+import 'package:salon_admin/features/staff/presentation/widgets/staff_modal.dart';
 
 class StaffScreen extends StatefulWidget {
   const StaffScreen({super.key});
@@ -11,7 +12,6 @@ class StaffScreen extends StatefulWidget {
 }
 
 class _StaffScreenState extends State<StaffScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -28,149 +28,108 @@ class _StaffScreenState extends State<StaffScreen> {
 
       /// ✅ FAB
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddStaffSheet(context),
+        onPressed: () => showAddStaffSheet(context),
         child: const Icon(Icons.add),
       ),
 
       /// ✅ STAFF LIST
-      body: BlocBuilder<StaffBloc, StaffState>(
-        builder: (context, state) {
-          if (state is StaffLoading) {
+      body: BlocBuilder<ServiceBloc, ServiceState>(
+        builder: (context, serviceState) {
+          if (serviceState is! ServiceLoaded) {
             return const Center(child: CircularProgressIndicator());
           }
+          final services = serviceState.services;
+          return BlocBuilder<StaffBloc, StaffState>(
+            builder: (context, state) {
+              if (state is StaffLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              
+              if (state is StaffLoaded) {
+                if (state.staffList.isEmpty) {
+                  return const Center(child: Text("No staff added"));
+                }
 
-          if (state is StaffLoaded) {
-            if (state.staffList.isEmpty) {
-              return const Center(child: Text("No staff added"));
-            }
+                return ListView.builder(
+                  itemCount: state.staffList.length,
+                  itemBuilder: (context, index) {
+                    final staff = state.staffList[index];
 
-            return ListView.builder(
-              itemCount: state.staffList.length,
-              itemBuilder: (context, index) {
-                final staff = state.staffList[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.all(12),
 
-                return ListTile(
-                  title: Text(staff.name),
-                  subtitle: Text("Services: ${staff.serviceIds.length}"),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      context.read<StaffBloc>().add(
-                            DeleteStaffEvent(staff.id),
-                          );
-                    },
-                  ),
+                        /// 🔥 IMAGE
+                        leading: CircleAvatar(
+                          radius: 28,
+                          backgroundImage: staff.image.isNotEmpty
+                              ? NetworkImage(staff.image)
+                              : null,
+                          child: staff.image.isEmpty
+                              ? const Icon(Icons.person)
+                              : null,
+                        ),
+
+                        /// 🔥 NAME + DESCRIPTION
+                        title: Text(
+                          staff.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+
+                            Text(
+                              staff.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            Text(
+  "Services: ${staff.serviceIds.map((id) {
+    try {
+      return services.firstWhere((s) => s.id == id).name;
+    } catch (e) {
+      return "Unknown";
+    }
+  }).join(", ")}",
+  style: const TextStyle(fontSize: 12, color: Colors.grey),
+),
+                          ],
+                        ),
+
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            context.read<StaffBloc>().add(
+                              DeleteStaffEvent(staff.id),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          }
+              }
 
-          return const SizedBox();
+              return const SizedBox();
+            },
+          );
         },
       ),
     );
   }
 
   /// 🔥 BOTTOM SHEET
-  void _showAddStaffSheet(BuildContext context) {
-    final nameController = TextEditingController();
-    List<String> selectedServices = [];
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-
-            return Padding(
-              padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-              ),
-              child: BlocBuilder<ServiceBloc, ServiceState>(
-                builder: (context, state) {
-
-                  if (state is ServiceLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (state is ServiceLoaded) {
-                    final services = state.services;
-
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Add Staff",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        /// NAME
-                        TextField(
-                          controller: nameController,
-                          decoration:
-                              const InputDecoration(labelText: "Name"),
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        /// SERVICES CHECKBOX
-                        SizedBox(
-                          height: 200,
-                          child: ListView(
-                            children: services.map((service) {
-                              return CheckboxListTile(
-                                title: Text(service.name),
-                                value: selectedServices.contains(service.id),
-                                onChanged: (val) {
-                                  setModalState(() {
-                                    val!
-                                        ? selectedServices.add(service.id)
-                                        : selectedServices
-                                            .remove(service.id);
-                                  });
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        /// SAVE
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<StaffBloc>().add(
-                                  AddStaffEvent(
-                                    nameController.text,
-                                    selectedServices,
-                                  ),
-                                );
-
-                            Navigator.pop(context); // ✅ CLOSE SHEET
-                          },
-                          child: const Text("Save"),
-                        )
-                      ],
-                    );
-                  }
-
-                  return const Text("No services found");
-                },
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 }

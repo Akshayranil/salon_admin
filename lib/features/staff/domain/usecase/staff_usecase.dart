@@ -23,4 +23,8 @@ class StaffUseCase {
   Future<List<StaffEntity>> getStaffByService(String serviceId) {
     return repository.getStaffByService(serviceId);
   }
+
+  Future<String> uploadStaffImage(String path) {
+  return repository.uploadStaffImage(path);
+}
 }

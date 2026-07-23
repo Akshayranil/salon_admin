@@ -15,6 +15,8 @@ class StaffRepositoryImpl implements StaffRepository {
     final model = StaffModel(
       id: staff.id,
       name: staff.name,
+      image: staff.image,
+      description: staff.description,
       serviceIds: staff.serviceIds,
     );
     await dataSource.addStaff(model);
@@ -28,6 +30,8 @@ class StaffRepositoryImpl implements StaffRepository {
         .map((e) => StaffEntity(
               id: e.id,
               name: e.name,
+              image: e.image,
+              description: e.description,
               serviceIds: e.serviceIds,
             ))
         .toList();
@@ -46,8 +50,15 @@ class StaffRepositoryImpl implements StaffRepository {
         .map((e) => StaffEntity(
               id: e.id,
               name: e.name,
+              image: e.image,
+              description: e.description,
               serviceIds: e.serviceIds,
             ))
         .toList();
   }
+
+  @override
+Future<String> uploadStaffImage(String path) {
+  return dataSource.uploadStaffImage(path);
+}
 }

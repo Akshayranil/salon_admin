@@ -16,34 +16,51 @@ class StaffBloc extends Bloc<StaffEvent, StaffState> {
     on<LoadStaffByServiceEvent>(_filterStaff);
   }
 
-  Future<void> _addStaff(
-      AddStaffEvent event, Emitter<StaffState> emit) async {
+  Future<void> _addStaff(AddStaffEvent event, Emitter<StaffState> emit) async {
+    emit(StaffLoading());
+    try{
+      String imageUrl = "";
+       if (event.imagePath.isNotEmpty) {
+      imageUrl = await useCase.uploadStaffImage(event.imagePath);
+    }
+    
     await useCase.addStaff(
       StaffEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: event.name,
+        image: imageUrl,
+        description: event.description,
         serviceIds: event.serviceIds,
       ),
     );
 
     add(LoadStaffEvent());
+  }catch(e){
+    print("ERROR: $e");
+  }
   }
 
   Future<void> _loadStaff(
-      LoadStaffEvent event, Emitter<StaffState> emit) async {
+    LoadStaffEvent event,
+    Emitter<StaffState> emit,
+  ) async {
     emit(StaffLoading());
     final data = await useCase.getStaff();
     emit(StaffLoaded(data));
   }
 
   Future<void> _deleteStaff(
-      DeleteStaffEvent event, Emitter<StaffState> emit) async {
+    DeleteStaffEvent event,
+    Emitter<StaffState> emit,
+  ) async {
     await useCase.deleteStaff(event.id);
     add(LoadStaffEvent());
   }
 
   Future<void> _filterStaff(
-      LoadStaffByServiceEvent event, Emitter<StaffState> emit) async {
+    LoadStaffByServiceEvent event,
+    Emitter<StaffState> emit,
+  ) async {
     emit(StaffLoading());
     final data = await useCase.getStaffByService(event.serviceId);
     emit(StaffLoaded(data));
