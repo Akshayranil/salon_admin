@@ -13,6 +13,7 @@ class BookingModel extends BookingEntity {
     required super.date,
     required super.time,
     required super.status,
+    required super.fcmToken
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +29,7 @@ class BookingModel extends BookingEntity {
       "time": time,
       "status": status,
       "createdAt": FieldValue.serverTimestamp(),
+      "fcmToken" : fcmToken
     };
   }
 
@@ -43,6 +45,7 @@ class BookingModel extends BookingEntity {
       date: json["date"],
       time: json["time"],
       status: json["status"],
+      fcmToken: json["fcmToken"]??""
     );
   }
 
@@ -58,6 +61,7 @@ class BookingModel extends BookingEntity {
       date: entity.date,
       time: entity.time,
       status: entity.status,
+      fcmToken: entity.fcmToken
     );
   }
 }

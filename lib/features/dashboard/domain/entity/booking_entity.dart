@@ -9,6 +9,7 @@ class BookingEntity {
   final String date;
   final String time;
   final String status;
+  final String fcmToken;
 
   BookingEntity({
     required this.id,
@@ -21,5 +22,6 @@ class BookingEntity {
     required this.date,
     required this.time,
     required this.status,
+    required this.fcmToken
   });
 }
