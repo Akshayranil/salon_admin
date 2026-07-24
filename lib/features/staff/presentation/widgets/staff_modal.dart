@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:salon_admin/core/colors.dart';
 import 'package:salon_admin/features/services/presentation/bloc/service_bloc.dart';
 import 'package:salon_admin/features/staff/presentation/bloc/staff_bloc.dart';
 
@@ -142,11 +143,14 @@ showAddStaffSheet(BuildContext context) {
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
+                              backgroundColor: ConstantColors.primary,
+                              foregroundColor: ConstantColors.secondary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
+                            
                             onPressed: () {
                               context.read<StaffBloc>().add(
                                     AddStaffEvent(

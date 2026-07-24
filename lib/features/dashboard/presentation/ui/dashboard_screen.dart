@@ -9,6 +9,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<BookingBloc>().add(GetAllBookingsEvent());
     return Scaffold(
       // backgroundColor: Colors.grey[100],
 
@@ -122,38 +123,94 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(12),
+                           child: Padding(
+  padding: const EdgeInsets.all(12),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
 
-                            /// SERVICE NAME
-                            title: Text(
-                              booking.serviceName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+      /// 🔥 TOP ROW
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            booking.serviceName,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            "₹${booking.amount}",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+        ],
+      ),
 
-                            /// DETAILS
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 6),
-                                Text("👤 User: ${booking.userId}"),
-                                Text("✂ Staff: ${booking.staffName}"),
-                                Text("📅 ${booking.date} | ⏰ ${booking.time}"),
-                              ],
-                            ),
+      const SizedBox(height: 8),
 
-                            /// AMOUNT
-                            trailing: Text(
-                              "₹${booking.amount}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ),
+      /// 👤 USER
+      Row(
+        children: [
+          const Icon(Icons.person, size: 16),
+          const SizedBox(width: 6),
+          Text(booking.userId),
+        ],
+      ),
+
+      const SizedBox(height: 4),
+
+      /// ✂ STAFF
+      Row(
+        children: [
+          const Icon(Icons.content_cut, size: 16),
+          const SizedBox(width: 6),
+          Text(booking.staffName),
+        ],
+      ),
+
+      const SizedBox(height: 4),
+
+      /// 📅 DATE & TIME
+      Row(
+        children: [
+          const Icon(Icons.calendar_today, size: 16),
+          const SizedBox(width: 6),
+          Text("${booking.date} • ${booking.time}"),
+        ],
+      ),
+
+      const SizedBox(height: 8),
+
+      /// 🔥 STATUS BADGE
+      Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 4,
+        ),
+        decoration: BoxDecoration(
+          color: booking.status == "confirmed"
+              ? Colors.green.withOpacity(0.2)
+              : Colors.orange.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          booking.status.toUpperCase(),
+          style: TextStyle(
+            color: booking.status == "confirmed"
+                ? Colors.green
+                : Colors.orange,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
                         );
                       },
                     ),
@@ -166,7 +223,7 @@ class DashboardScreen extends StatelessWidget {
               return Center(child: Text(state.error));
             }
 
-            return const SizedBox();
+            return Center(child: Text("Dashboard is empty"),);
           },
         ),
       ),
